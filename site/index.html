@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="OpenSETI Agent Network: 用 BYOK API Worker 与 Codex / Claude Code 客户端参与可审计的 SETI 候选信号与天文数据复核。"
+    />
+    <title>OpenSETI Agent Network</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="hero">
+      <nav class="nav" aria-label="主导航">
+        <a class="brand" href="#top">OpenSETI Agent Network</a>
+        <div class="nav-links">
+          <a href="#how">架构</a>
+          <a href="#run">运行</a>
+          <a href="#safety">安全</a>
+          <a href="https://github.com/chaochaoweb3/openseti-agent-network">GitHub</a>
+        </div>
+      </nav>
+
+      <section id="top" class="hero-grid">
+        <div class="hero-copy">
+          <p class="eyebrow">开源 SETI · 志愿者智能体网络</p>
+          <h1>让闲置 AI 使用额度参与可审计的 SETI 候选信号复核</h1>
+          <p class="lede">
+            项目支持两种参与方式：有 API 额度的人运行 BYOK Worker；
+            Codex / Claude Code 用户直接在自己的客户端里领取任务、生成结果、人工审查后提交。
+            第一版聚焦寻找外星文明相关的公开天文数据复核。
+          </p>
+          <div class="actions">
+            <a class="button primary" href="https://github.com/chaochaoweb3/openseti-agent-network">
+              查看 GitHub
+            </a>
+            <a class="button secondary" href="#run">本地跑 Demo</a>
+          </div>
+        </div>
+        <div class="hero-panel" aria-label="项目核心边界">
+          <div class="metric">
+            <span class="metric-value">2</span>
+            <span class="metric-label">参与路线</span>
+          </div>
+          <div class="metric">
+            <span class="metric-value">0</span>
+            <span class="metric-label">中央托管密钥</span>
+          </div>
+          <div class="metric">
+            <span class="metric-value">12</span>
+            <span class="metric-label">当前测试用例</span>
+          </div>
+        </div>
+      </section>
+    </header>
+
+    <main>
+      <section class="section" id="how">
+        <div class="section-heading">
+          <p class="eyebrow">How it works</p>
+          <h2>中央只分发 SETI 复核任务和收结果，模型调用发生在志愿者本机</h2>
+        </div>
+        <img
+          class="architecture"
+          src="assets/architecture-zh-CN.png"
+          alt="开放科学智能体网络中文架构图"
+        />
+      </section>
+
+      <section class="section cards">
+        <article class="card">
+          <h3>路线 A：BYOK API Worker</h3>
+          <p>
+            志愿者在本机配置自己的 OpenAI、Anthropic 或本地模型环境。
+            Worker 领取任务、调用模型、生成结构化结果。API Key 不离开本机。
+          </p>
+        </article>
+        <article class="card">
+          <h3>路线 B：Agent Client</h3>
+          <p>
+            Codex / Claude Code 用户打开仓库，按 AGENTS.md 领取任务。
+            用户能审查每一步，最后决定是否提交结果。
+          </p>
+        </article>
+        <article class="card">
+          <h3>可审计科学输出</h3>
+          <p>
+            结果必须包含证据、置信度、限制和推荐动作。LLM 不直接宣布发现，
+            只辅助整理、解释、复核和排序。
+          </p>
+        </article>
+      </section>
+
+      <section class="section split" id="run">
+        <div>
+          <p class="eyebrow">Run locally</p>
+          <h2>一分钟跑通 SETI 复核 Demo</h2>
+          <p>
+            当前原型包含一个合成 SETI 候选信号复核任务、dry-run worker、
+            本地协调服务、结果 schema 校验和敏感信息扫描。
+          </p>
+        </div>
+        <pre><code>git clone https://github.com/chaochaoweb3/openseti-agent-network.git
+cd openseti-agent-network
+python3 -m venv .venv
+. .venv/bin/activate
+pip install -e ".[test]"
+pytest
+
+scripts/run-task --task tasks/openseti-demo-001.json \
+  --output results/demo-result.json \
+  --dry-run
+scripts/validate-result results/demo-result.json</code></pre>
+      </section>
+
+      <section class="section safety" id="safety">
+        <div class="section-heading">
+          <p class="eyebrow">Safety boundary</p>
+          <h2>不是共享账号，也不是集中 token 池</h2>
+        </div>
+        <ul class="checks">
+          <li>不上传 API Key、OAuth Token、Cookie、Session ID。</li>
+          <li>不代理 ChatGPT / Claude 网页订阅，不转售额度。</li>
+          <li>结果提交前做 schema 校验和敏感信息扫描。</li>
+          <li>所有 demo 输出都需要人工科学复核，不能当作发现声明。</li>
+        </ul>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <span>Apache-2.0 · Open science prototype</span>
+      <a href="https://github.com/chaochaoweb3/openseti-agent-network">GitHub</a>
+    </footer>
+  </body>
+</html>

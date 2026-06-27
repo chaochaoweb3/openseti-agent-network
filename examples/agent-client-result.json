@@ -1,0 +1,28 @@
+{
+  "cost_estimate_usd": 0,
+  "created_at": "2026-06-27T00:00:00+00:00",
+  "evidence_refs": [
+    "task.input.center_frequency_mhz",
+    "task.input.repeat_observation.detected_again",
+    "task.review_questions"
+  ],
+  "input_sha256": "self-contained-demo",
+  "limitations": [
+    "This is a synthetic demo task.",
+    "No raw voltage data or RFI environment log was provided."
+  ],
+  "mode": "agent-client",
+  "model_name": "unknown-agent",
+  "model_provider": "agent-client",
+  "prompt_version": "openseti-review-v1",
+  "recommendation": "needs_human_review",
+  "result": {
+    "analysis": "The candidate has interesting narrowband properties, but non-repeat detection in the follow-up observation makes a mundane explanation more likely than a strong scientific claim. It should be preserved for audit and reviewed by a human before any follow-up priority is assigned.",
+    "classification": "likely_rfi_or_instrumental",
+    "short_summary": "A narrowband candidate near the hydrogen line was not reproduced in follow-up, so the conservative assessment is likely interference or instrumental artifact."
+  },
+  "runtime_seconds": 0,
+  "task_id": "openseti-demo-001",
+  "worker_id": "example-agent-client",
+  "confidence": 0.66
+}

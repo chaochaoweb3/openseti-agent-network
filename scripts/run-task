@@ -1,0 +1,4 @@
+#!/usr/bin/env python3
+from osan.worker import main
+
+raise SystemExit(main())

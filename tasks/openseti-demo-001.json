@@ -1,0 +1,46 @@
+{
+  "task_id": "openseti-demo-001",
+  "domain": "seti",
+  "task_type": "candidate_review",
+  "title": "Demo review of a narrowband candidate near a public target star",
+  "dataset_source": "synthetic-demo-derived-from-public-seti-review-patterns",
+  "source_license": "CC0",
+  "input_uri": "tasks/openseti-demo-001.json",
+  "input_sha256": "self-contained-demo",
+  "objective": "Review a synthetic narrowband candidate record and produce a conservative, auditable SETI-style assessment.",
+  "input": {
+    "target_name": "Kepler-452",
+    "right_ascension": "19h44m00.89s",
+    "declination": "+44d16m39.2s",
+    "observatory": "public-demo-observatory",
+    "center_frequency_mhz": 1420.4058,
+    "frequency_drift_hz_per_s": -0.12,
+    "snr": 18.7,
+    "bandwidth_hz": 3.1,
+    "observation_duration_s": 300,
+    "repeat_observation": {
+      "performed": true,
+      "detected_again": false,
+      "delay_hours": 24
+    },
+    "known_context": [
+      "Frequency is close to the neutral hydrogen line, which is scientifically interesting but also heavily monitored.",
+      "The candidate is narrowband and above the demo SNR threshold.",
+      "No repeat detection was reported in the follow-up observation.",
+      "No raw voltage data is included in this demo task."
+    ]
+  },
+  "review_questions": [
+    "Does the candidate deserve follow-up observation?",
+    "What mundane explanations should be considered first?",
+    "What evidence is missing before any strong claim could be made?"
+  ],
+  "expected_outputs": [
+    "short_summary",
+    "classification",
+    "confidence",
+    "recommendation",
+    "evidence_refs",
+    "limitations"
+  ]
+}

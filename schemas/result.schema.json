@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://open-science-agent-network.local/schemas/result.schema.json",
+  "title": "Open Science Agent Network Result",
+  "type": "object",
+  "required": [
+    "task_id",
+    "worker_id",
+    "mode",
+    "model_provider",
+    "model_name",
+    "result",
+    "confidence",
+    "recommendation",
+    "evidence_refs",
+    "limitations",
+    "runtime_seconds",
+    "cost_estimate_usd",
+    "created_at"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "task_id": { "type": "string", "minLength": 1 },
+    "worker_id": { "type": "string", "minLength": 1 },
+    "mode": { "enum": ["api-worker", "agent-client"] },
+    "model_provider": { "type": "string", "minLength": 1 },
+    "model_name": { "type": "string", "minLength": 1 },
+    "prompt_version": { "type": "string" },
+    "input_sha256": { "type": "string" },
+    "result": {
+      "type": "object",
+      "required": ["short_summary", "classification", "analysis"],
+      "additionalProperties": true,
+      "properties": {
+        "short_summary": { "type": "string", "minLength": 1 },
+        "classification": {
+          "enum": [
+            "likely_rfi_or_instrumental",
+            "ambiguous_candidate",
+            "interesting_but_unconfirmed",
+            "insufficient_data"
+          ]
+        },
+        "analysis": { "type": "string", "minLength": 1 }
+      }
+    },
+    "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+    "recommendation": {
+      "enum": [
+        "reject_likely_rfi",
+        "needs_human_review",
+        "needs_follow_up_observation",
+        "insufficient_data"
+      ]
+    },
+    "evidence_refs": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "limitations": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "runtime_seconds": { "type": "number", "minimum": 0 },
+    "cost_estimate_usd": { "type": "number", "minimum": 0 },
+    "created_at": { "type": "string", "minLength": 1 }
+  }
+}
