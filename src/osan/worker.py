@@ -112,6 +112,25 @@ def post_json(url: str, payload: dict[str, Any], headers: dict[str, str]) -> dic
     return json.loads(data)
 
 
+def get_json(url: str) -> dict[str, Any]:
+    request = urllib.request.Request(url, method="GET")
+    try:
+        with urllib.request.urlopen(request, timeout=60) as response:
+            data = response.read().decode("utf-8")
+    except urllib.error.HTTPError as exc:
+        detail = exc.read().decode("utf-8")
+        raise RuntimeError(f"coordinator request failed: {exc.code} {detail}") from exc
+    payload = json.loads(data)
+    if not isinstance(payload, dict):
+        raise RuntimeError("coordinator response must be a JSON object")
+    return payload
+
+
+def submit_result(coordinator_url: str, payload: dict[str, Any]) -> dict[str, Any]:
+    base = coordinator_url.rstrip("/")
+    return post_json(f"{base}/v1/results", payload, {})
+
+
 def call_openai(task: dict[str, Any], model: str) -> dict[str, Any]:
     api_key = os.environ.get("OPENAI_API_KEY")
     if not api_key:
@@ -217,8 +236,13 @@ def run_task(
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Run one OSAN volunteer task.")
-    parser.add_argument("--task", type=Path, required=True)
-    parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--task", type=Path, help="Local task JSON file. Optional with --coordinator-url.")
+    parser.add_argument("--output", type=Path, help="Output file for single-run mode.")
+    parser.add_argument("--output-dir", type=Path, default=Path("results"))
+    parser.add_argument("--coordinator-url", help="Coordinator base URL, for example http://127.0.0.1:8765.")
+    parser.add_argument("--submit", action="store_true", help="Submit results to --coordinator-url after validation.")
+    parser.add_argument("--repeat", type=int, default=1, help="Number of tasks to run. Use 0 for an infinite loop.")
+    parser.add_argument("--interval", type=float, default=0, help="Seconds to sleep between repeated runs.")
     parser.add_argument("--provider", choices=["dry-run", "openai", "anthropic"], default="dry-run")
     parser.add_argument("--model", default="dry-run-reviewer-v1")
     parser.add_argument("--worker-id", default=os.environ.get("OSAN_WORKER_ID", "local-worker"))
@@ -229,15 +253,57 @@ def main(argv: list[str] | None = None) -> int:
     provider = "dry-run" if args.dry_run else args.provider
     model = "dry-run-reviewer-v1" if provider == "dry-run" and args.model == "dry-run-reviewer-v1" else args.model
 
-    task = load_json(args.task)
-    payload = run_task(task, provider, model, args.worker_id, args.max_cost_usd)
+    if args.repeat < 0:
+        parser.error("--repeat must be >= 0")
+    if args.interval < 0:
+        parser.error("--interval must be >= 0")
+    if args.submit and not args.coordinator_url:
+        parser.error("--submit requires --coordinator-url")
+    if not args.task and not args.coordinator_url:
+        parser.error("one of --task or --coordinator-url is required")
+    if args.repeat == 1 and not args.output:
+        parser.error("--output is required for single-run mode")
 
-    args.output.parent.mkdir(parents=True, exist_ok=True)
-    with args.output.open("w", encoding="utf-8") as handle:
-        json.dump(payload, handle, ensure_ascii=False, indent=2, sort_keys=True)
-        handle.write("\n")
+    iteration = 0
+    try:
+        while args.repeat == 0 or iteration < args.repeat:
+            iteration += 1
+            if args.task:
+                task = load_json(args.task)
+            else:
+                task = get_json(f"{args.coordinator_url.rstrip('/')}/v1/tasks/next")
 
-    print(f"wrote {args.output}")
+            worker_id = args.worker_id
+            if args.repeat != 1:
+                worker_id = f"{args.worker_id}-{iteration:06d}"
+
+            payload = run_task(task, provider, model, worker_id, args.max_cost_usd)
+
+            if args.repeat == 1 and args.output:
+                output = args.output
+            else:
+                task_id = "".join(char for char in task["task_id"] if char.isalnum() or char in "._-")
+                output = args.output_dir / f"{task_id}--{worker_id}.json"
+
+            output.parent.mkdir(parents=True, exist_ok=True)
+            with output.open("w", encoding="utf-8") as handle:
+                json.dump(payload, handle, ensure_ascii=False, indent=2, sort_keys=True)
+                handle.write("\n")
+
+            if args.submit:
+                response = submit_result(args.coordinator_url, payload)
+                if not response.get("ok"):
+                    raise RuntimeError(f"coordinator rejected result: {response}")
+                print(f"submitted {payload['task_id']} as {worker_id}: {response.get('path')}", flush=True)
+            else:
+                print(f"wrote {output}", flush=True)
+
+            if (args.repeat == 0 or iteration < args.repeat) and args.interval:
+                time.sleep(args.interval)
+    except KeyboardInterrupt:
+        print(f"stopped after {iteration} iteration(s)", flush=True)
+        return 130
+
     return 0
 
 

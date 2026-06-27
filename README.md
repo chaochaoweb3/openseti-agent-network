@@ -72,6 +72,21 @@ View the local leaderboard:
 curl http://127.0.0.1:8765/v1/leaderboard
 ```
 
+Run continuously from the coordinator:
+
+```bash
+scripts/run-task \
+  --coordinator-url http://127.0.0.1:8765 \
+  --submit \
+  --repeat 10 \
+  --interval 1 \
+  --dry-run \
+  --worker-id local-volunteer
+```
+
+Use `--repeat 0` for an infinite loop. Start with `--dry-run` before spending
+API budget.
+
 ## BYOK API Worker Mode
 
 Dry-run mode is the default safe demo path and does not use any paid API.
