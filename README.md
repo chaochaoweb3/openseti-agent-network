@@ -130,6 +130,12 @@ This repository is a working prototype. It includes:
 It does not yet process raw radio telescope data or make autonomous scientific
 claims.
 
+## Acknowledgements
+
+This project was partly inspired by ideas discussed by X user
+[`@disksing`](https://x.com/disksing). Mentioning this inspiration does not
+imply endorsement, affiliation, or responsibility for this prototype.
+
 ## License
 
 Code is licensed under Apache-2.0. Example task/result data is intended for

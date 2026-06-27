@@ -235,7 +235,7 @@ pre {
 }
 
 .safety {
-  padding-bottom: 90px;
+  padding-bottom: 40px;
 }
 
 .checks {
@@ -263,6 +263,23 @@ pre {
   padding: 30px 24px 44px;
   color: var(--muted);
   border-top: 1px solid var(--line);
+}
+
+.acknowledgement {
+  padding-top: 20px;
+  padding-bottom: 90px;
+}
+
+.acknowledgement p {
+  max-width: 820px;
+  color: var(--muted);
+  font-size: 17px;
+  line-height: 1.7;
+}
+
+.acknowledgement a {
+  color: var(--teal);
+  font-weight: 760;
 }
 
 @media (max-width: 860px) {
