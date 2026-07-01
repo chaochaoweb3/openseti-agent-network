@@ -20,6 +20,7 @@ For a Chinese architecture walkthrough, see
 
 For project direction and maintainer workflow, see [`ROADMAP.md`](ROADMAP.md)
 and [`docs/maintainer-operating-loop.md`](docs/maintainer-operating-loop.md).
+For release confidence, use [`docs/release-readiness.md`](docs/release-readiness.md).
 
 Project homepage source lives in [`site/`](site/) and can be hosted by GitHub
 Pages or any static web server. The architecture can later support other
@@ -157,7 +158,8 @@ The next milestones are documented in [`ROADMAP.md`](ROADMAP.md). Maintainer
 agents should follow the operating loop in
 [`docs/maintainer-operating-loop.md`](docs/maintainer-operating-loop.md): refresh
 live state, classify work, pick one primary outcome, verify it, and leave a
-clear next step.
+clear next step. Before public announcements, run the checks in
+[`docs/release-readiness.md`](docs/release-readiness.md).
 
 ## Acknowledgements
 

@@ -52,7 +52,8 @@ curl http://127.0.0.1:8765/v1/leaderboard
 ```
 
 For a release-confidence run, repeat the install and smoke test from a fresh
-clone under `/tmp`.
+clone under `/tmp`. Use [`release-readiness.md`](release-readiness.md) as the
+full checklist.
 
 ## Status Format
 
@@ -71,4 +72,3 @@ Blocked:
 Next:
 - ...
 ```
-
