@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 
 from osan.validator import validate_result
-from osan.worker import get_json, run_task, submit_result
+from osan.worker import get_json, main, run_task, submit_result
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -48,3 +48,26 @@ def test_submit_result_posts_to_coordinator(tmp_path):
     finally:
         server.shutdown()
         server.server_close()
+
+
+def test_total_budget_stops_before_provider_call(tmp_path, monkeypatch):
+    monkeypatch.delenv("OPENAI_API_KEY", raising=False)
+    task = ROOT / "tasks" / "openseti-demo-001.json"
+
+    exit_code = main(
+        [
+            "--task",
+            str(task),
+            "--provider",
+            "openai",
+            "--repeat",
+            "2",
+            "--max-total-cost-usd",
+            "0",
+            "--output-dir",
+            str(tmp_path),
+        ]
+    )
+
+    assert exit_code == 0
+    assert not list(tmp_path.glob("*.json"))

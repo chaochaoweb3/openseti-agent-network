@@ -243,6 +243,10 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--submit", action="store_true", help="Submit results to --coordinator-url after validation.")
     parser.add_argument("--repeat", type=int, default=1, help="Number of tasks to run. Use 0 for an infinite loop.")
     parser.add_argument("--interval", type=float, default=0, help="Seconds to sleep between repeated runs.")
+    parser.add_argument("--stop-after-seconds", type=float, help="Stop after this many seconds, useful with --repeat 0.")
+    parser.add_argument("--max-total-cost-usd", type=float, help="Stop before total estimated cost exceeds this amount.")
+    parser.add_argument("--continue-on-error", action="store_true", help="Keep looping after a task failure.")
+    parser.add_argument("--error-backoff", type=float, default=30, help="Seconds to sleep after an error with --continue-on-error.")
     parser.add_argument("--provider", choices=["dry-run", "openai", "anthropic"], default="dry-run")
     parser.add_argument("--model", default="dry-run-reviewer-v1")
     parser.add_argument("--worker-id", default=os.environ.get("OSAN_WORKER_ID", "local-worker"))
@@ -257,6 +261,12 @@ def main(argv: list[str] | None = None) -> int:
         parser.error("--repeat must be >= 0")
     if args.interval < 0:
         parser.error("--interval must be >= 0")
+    if args.error_backoff < 0:
+        parser.error("--error-backoff must be >= 0")
+    if args.stop_after_seconds is not None and args.stop_after_seconds <= 0:
+        parser.error("--stop-after-seconds must be > 0")
+    if args.max_total_cost_usd is not None and args.max_total_cost_usd < 0:
+        parser.error("--max-total-cost-usd must be >= 0")
     if args.submit and not args.coordinator_url:
         parser.error("--submit requires --coordinator-url")
     if not args.task and not args.coordinator_url:
@@ -265,44 +275,86 @@ def main(argv: list[str] | None = None) -> int:
         parser.error("--output is required for single-run mode")
 
     iteration = 0
+    successes = 0
+    failures = 0
+    total_cost = 0.0
+    started_at = time.monotonic()
     try:
         while args.repeat == 0 or iteration < args.repeat:
+            if args.stop_after_seconds is not None and time.monotonic() - started_at >= args.stop_after_seconds:
+                print(f"stopping after {args.stop_after_seconds}s runtime limit", flush=True)
+                break
+
             iteration += 1
-            if args.task:
-                task = load_json(args.task)
-            else:
-                task = get_json(f"{args.coordinator_url.rstrip('/')}/v1/tasks/next")
+            try:
+                if args.task:
+                    task = load_json(args.task)
+                else:
+                    task = get_json(f"{args.coordinator_url.rstrip('/')}/v1/tasks/next")
 
-            worker_id = args.worker_id
-            if args.repeat != 1:
-                worker_id = f"{args.worker_id}-{iteration:06d}"
+                estimated_cost = estimate_cost_usd(provider, len(build_prompt(task)))
+                if (
+                    args.max_total_cost_usd is not None
+                    and total_cost + estimated_cost > args.max_total_cost_usd
+                ):
+                    print(
+                        f"stopping before iteration {iteration}: estimated total cost "
+                        f"${total_cost + estimated_cost:.6f} exceeds ${args.max_total_cost_usd:.6f}",
+                        flush=True,
+                    )
+                    iteration -= 1
+                    break
 
-            payload = run_task(task, provider, model, worker_id, args.max_cost_usd)
+                worker_id = args.worker_id
+                if args.repeat != 1:
+                    worker_id = f"{args.worker_id}-{iteration:06d}"
 
-            if args.repeat == 1 and args.output:
-                output = args.output
-            else:
-                task_id = "".join(char for char in task["task_id"] if char.isalnum() or char in "._-")
-                output = args.output_dir / f"{task_id}--{worker_id}.json"
+                payload = run_task(task, provider, model, worker_id, args.max_cost_usd)
 
-            output.parent.mkdir(parents=True, exist_ok=True)
-            with output.open("w", encoding="utf-8") as handle:
-                json.dump(payload, handle, ensure_ascii=False, indent=2, sort_keys=True)
-                handle.write("\n")
+                if args.repeat == 1 and args.output:
+                    output = args.output
+                else:
+                    task_id = "".join(char for char in task["task_id"] if char.isalnum() or char in "._-")
+                    output = args.output_dir / f"{task_id}--{worker_id}.json"
 
-            if args.submit:
-                response = submit_result(args.coordinator_url, payload)
-                if not response.get("ok"):
-                    raise RuntimeError(f"coordinator rejected result: {response}")
-                print(f"submitted {payload['task_id']} as {worker_id}: {response.get('path')}", flush=True)
-            else:
-                print(f"wrote {output}", flush=True)
+                output.parent.mkdir(parents=True, exist_ok=True)
+                with output.open("w", encoding="utf-8") as handle:
+                    json.dump(payload, handle, ensure_ascii=False, indent=2, sort_keys=True)
+                    handle.write("\n")
+
+                if args.submit:
+                    response = submit_result(args.coordinator_url, payload)
+                    if not response.get("ok"):
+                        raise RuntimeError(f"coordinator rejected result: {response}")
+                    print(f"submitted {payload['task_id']} as {worker_id}: {response.get('path')}", flush=True)
+                else:
+                    print(f"wrote {output}", flush=True)
+
+                successes += 1
+                total_cost += payload["cost_estimate_usd"]
+            except Exception as exc:  # noqa: BLE001 - worker loop should decide whether to keep running.
+                failures += 1
+                print(f"iteration {iteration} failed: {exc}", flush=True)
+                if not args.continue_on_error:
+                    raise
+                if args.error_backoff:
+                    time.sleep(args.error_backoff)
 
             if (args.repeat == 0 or iteration < args.repeat) and args.interval:
                 time.sleep(args.interval)
     except KeyboardInterrupt:
         print(f"stopped after {iteration} iteration(s)", flush=True)
         return 130
+
+    if args.repeat != 1 or args.coordinator_url:
+        elapsed = time.monotonic() - started_at
+        print(
+            f"summary: iterations={iteration} successes={successes} failures={failures} "
+            f"estimated_cost_usd={total_cost:.6f} elapsed_seconds={elapsed:.3f}",
+            flush=True,
+        )
+        if failures:
+            return 1
 
     return 0
 

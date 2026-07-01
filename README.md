@@ -81,14 +81,17 @@ Run continuously from the coordinator:
 scripts/run-task \
   --coordinator-url http://127.0.0.1:8765 \
   --submit \
-  --repeat 10 \
+  --repeat 0 \
   --interval 1 \
+  --stop-after-seconds 3600 \
+  --max-total-cost-usd 0 \
   --dry-run \
   --worker-id local-volunteer
 ```
 
 Use `--repeat 0` for an infinite loop. Start with `--dry-run` before spending
-API budget.
+API budget. For real API providers, set `--max-total-cost-usd` to a real budget
+and use a conservative `--interval`.
 
 ## BYOK API Worker Mode
 
