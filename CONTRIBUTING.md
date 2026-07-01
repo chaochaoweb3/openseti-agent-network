@@ -9,6 +9,8 @@ Thanks for helping with OpenSETI Agent Network.
 - Add provider integrations that keep credentials local.
 - Improve documentation for Codex, Claude Code, and BYOK workflows.
 - Review demo results and propose better scientific review criteria.
+- Pick a scoped item from [`ROADMAP.md`](ROADMAP.md) or the maintainer task
+  issue template.
 
 ## Development Setup
 
@@ -26,9 +28,18 @@ pytest
   committed.
 - New result formats remain compatible with `schemas/result.schema.json`.
 - Scientific language stays conservative and auditable.
+- Runtime changes include a coordinator or fresh-clone smoke test when relevant.
 
 ## Task Contributions
 
 Task JSON should use public or redistributable data. Include source and license
 metadata whenever possible. Do not include private datasets, credentials, or
 browser session data.
+
+## Maintainer Tasks
+
+Maintainer-generated work should follow
+[`docs/maintainer-operating-loop.md`](docs/maintainer-operating-loop.md). Keep
+each task tied to one outcome, one verification path, and one roadmap phase.
+Avoid broad refactors unless they unblock a broken public path or a clear safety
+boundary.

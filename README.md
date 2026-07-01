@@ -18,6 +18,9 @@ Homepage: <https://openseti.chaochaoweb3.com>
 For a Chinese architecture walkthrough, see
 [`docs/architecture.zh-CN.md`](docs/architecture.zh-CN.md).
 
+For project direction and maintainer workflow, see [`ROADMAP.md`](ROADMAP.md)
+and [`docs/maintainer-operating-loop.md`](docs/maintainer-operating-loop.md).
+
 Project homepage source lives in [`site/`](site/) and can be hosted by GitHub
 Pages or any static web server. The architecture can later support other
 scientific review tasks, but the public v1 focus is SETI and astronomy.
@@ -144,6 +147,14 @@ This repository is a working prototype. It includes:
 
 It does not yet process raw radio telescope data or make autonomous scientific
 claims.
+
+## Project Direction
+
+The next milestones are documented in [`ROADMAP.md`](ROADMAP.md). Maintainer
+agents should follow the operating loop in
+[`docs/maintainer-operating-loop.md`](docs/maintainer-operating-loop.md): refresh
+live state, classify work, pick one primary outcome, verify it, and leave a
+clear next step.
 
 ## Acknowledgements
 
