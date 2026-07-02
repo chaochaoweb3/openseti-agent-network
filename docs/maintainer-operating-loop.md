@@ -47,8 +47,9 @@ git status -sb
 . .venv/bin/activate
 pytest -q
 python -m osan.server --host 127.0.0.1 --port 8765
-scripts/run-task --coordinator-url http://127.0.0.1:8765 --submit --repeat 10 --interval 0 --dry-run --worker-id maintainer-smoke
+scripts/run-task --task tasks/openseti-demo-001.json --coordinator-url http://127.0.0.1:8765 --submit --repeat 10 --interval 0 --dry-run --worker-id maintainer-smoke
 curl http://127.0.0.1:8765/v1/leaderboard
+curl http://127.0.0.1:8765/v1/tasks/openseti-demo-001/summary
 ```
 
 For a release-confidence run, repeat the install and smoke test from a fresh

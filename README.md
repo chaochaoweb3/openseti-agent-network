@@ -72,10 +72,12 @@ curl -X POST http://127.0.0.1:8765/v1/results \
   --data-binary @results/demo-result.json
 ```
 
-View the local leaderboard:
+View the task catalog, local leaderboard, and one task review summary:
 
 ```bash
+curl http://127.0.0.1:8765/v1/tasks
 curl http://127.0.0.1:8765/v1/leaderboard
+curl http://127.0.0.1:8765/v1/tasks/openseti-demo-001/summary
 ```
 
 Run continuously from the coordinator:
@@ -150,6 +152,7 @@ This repository is a working prototype. It includes:
 - a Codex/Claude Code agent workflow
 - result schema validation and secret scanning
 - task intake validation and a public task rubric
+- task catalog and per-task result aggregation endpoints
 - a synthetic SETI candidate review demo
 - a public TESS-SPOC metadata-only transit review fixture
 

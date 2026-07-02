@@ -8,7 +8,7 @@ from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from typing import Any
-from urllib.parse import unquote
+from urllib.parse import unquote, urlparse
 
 from .repository import Repository
 from .validator import validate_result
@@ -44,9 +44,13 @@ class CoordinatorHandler(BaseHTTPRequestHandler):
         return json.loads(raw.decode("utf-8"))
 
     def do_GET(self) -> None:  # noqa: N802
-        path = self.path.removeprefix("/v1")
+        path = urlparse(self.path).path.removeprefix("/v1")
         if path == "/health":
             self.send_json({"ok": True})
+            return
+
+        if path == "/tasks":
+            self.send_json({"tasks": self.repo.task_catalog()})
             return
 
         if path == "/tasks/next":
@@ -55,6 +59,15 @@ class CoordinatorHandler(BaseHTTPRequestHandler):
                 self.send_json({"error": "no tasks available"}, HTTPStatus.NOT_FOUND)
                 return
             self.send_json(task)
+            return
+
+        if path.startswith("/tasks/") and path.endswith("/summary"):
+            task_id = unquote(path.removeprefix("/tasks/").removesuffix("/summary").rstrip("/"))
+            summary = self.repo.task_summary(task_id)
+            if summary is None:
+                self.send_json({"error": "task not found", "task_id": task_id}, HTTPStatus.NOT_FOUND)
+                return
+            self.send_json(summary)
             return
 
         if path.startswith("/tasks/"):
@@ -73,7 +86,7 @@ class CoordinatorHandler(BaseHTTPRequestHandler):
         self.send_json({"error": "not found"}, HTTPStatus.NOT_FOUND)
 
     def do_POST(self) -> None:  # noqa: N802
-        path = self.path.removeprefix("/v1")
+        path = urlparse(self.path).path.removeprefix("/v1")
         if path != "/results":
             self.send_json({"error": "not found"}, HTTPStatus.NOT_FOUND)
             return

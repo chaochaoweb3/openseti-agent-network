@@ -13,6 +13,7 @@ The current priority is to keep the public demo boringly runnable.
 - Keep `pytest -q` green across supported Python versions.
 - Keep the GitHub Pages homepage deployed.
 - Keep the local coordinator plus dry-run worker path working from a fresh clone.
+- Keep task catalog, leaderboard, and per-task summary endpoints working.
 - Keep result validation strict enough to reject credentials, private data, and
   unsupported scientific claims.
 - Document the continuous worker path clearly enough for a new volunteer to run
@@ -52,7 +53,8 @@ These items are intentionally later because they expand the trust boundary.
 
 - Signed or checksum-linked task bundles.
 - Multi-task queues and task assignment policy.
-- Result aggregation that compares independent volunteer reviews.
+- Richer result aggregation policies for quorum thresholds, reviewer weighting,
+  and long-running task health.
 - Optional public leaderboard hygiene and abuse controls.
 - More provider integrations that keep credentials local.
 

@@ -18,11 +18,13 @@
 
 ## 2. 协调服务 Coordinator
 
-协调服务只做三件事：
+协调服务提供这些核心接口：
 
+- `GET /v1/tasks`：查看任务目录和复核状态
 - `GET /v1/tasks/next`：领取任务
 - `POST /v1/results`：提交结果
 - `GET /v1/leaderboard`：查看贡献榜
+- `GET /v1/tasks/<task_id>/summary`：查看单个任务的多人复核摘要
 
 它不接收用户账号，不保存 API Key，不代理 ChatGPT 或 Claude 订阅。
 
@@ -57,6 +59,7 @@ API Key 只留在本机，结果提交前会经过敏感信息扫描。
 
 - 多人复核一致性
 - 分歧标记
+- 多数意见和平均置信度摘要
 - 贡献榜
 - 可复现实验报告
 - 人工科学复核

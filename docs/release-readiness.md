@@ -44,6 +44,7 @@ Run repeated dry-run submissions in another terminal:
 ```bash
 . .venv/bin/activate
 scripts/run-task \
+  --task tasks/openseti-demo-001.json \
   --coordinator-url http://127.0.0.1:8765 \
   --submit \
   --repeat 10 \
@@ -51,12 +52,15 @@ scripts/run-task \
   --dry-run \
   --worker-id release-smoke
 curl http://127.0.0.1:8765/v1/leaderboard
+curl http://127.0.0.1:8765/v1/tasks/openseti-demo-001/summary
 ```
 
 Expected result:
 
 - 10 submissions return `201`
 - the leaderboard shows 10 valid results for the demo task
+- the task summary shows 10 results, no need for more reviews, and a consensus
+  recommendation
 - generated result JSON remains ignored by Git
 
 ## 4. Fresh Clone Gate
@@ -94,4 +98,3 @@ Expected result:
 
 Do not call a change release-ready if any of these fail. Fix the failing public
 path first, then rerun the checklist from the beginning.
-
