@@ -66,6 +66,12 @@ scripts/validate-task tasks/openseti-demo-001.json
 scripts/validate-result results/demo-result.json
 ```
 
+Run the local release smoke path in one command:
+
+```bash
+scripts/release-smoke --repeat 3 --task-id openseti-demo-001
+```
+
 Submit the result to the local coordinator:
 
 ```bash

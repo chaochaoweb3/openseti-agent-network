@@ -22,8 +22,11 @@ def json_bytes(payload: Any, status: int = 200) -> bytes:
 
 class CoordinatorHandler(BaseHTTPRequestHandler):
     repo: Repository
+    quiet: bool = False
 
     def log_message(self, format: str, *args: Any) -> None:  # noqa: A002
+        if self.quiet:
+            return
         print(f"{self.address_string()} - {format % args}")
 
     def send_json(self, payload: Any, status: int = 200) -> None:
@@ -106,13 +109,14 @@ class CoordinatorHandler(BaseHTTPRequestHandler):
         self.send_json({"ok": True, "path": str(path.relative_to(self.repo.root))}, HTTPStatus.CREATED)
 
 
-def build_server(root: Path, host: str, port: int) -> ThreadingHTTPServer:
+def build_server(root: Path, host: str, port: int, quiet: bool = False) -> ThreadingHTTPServer:
     repo = Repository(root)
 
     class Handler(CoordinatorHandler):
         pass
 
     Handler.repo = repo
+    Handler.quiet = quiet
     return ThreadingHTTPServer((host, port), Handler)
 
 

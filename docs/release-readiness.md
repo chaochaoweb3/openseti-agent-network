@@ -36,32 +36,17 @@ Expected result:
 
 ## 3. Local Coordinator Smoke Test
 
-Start the coordinator in one terminal:
+Run the release smoke test:
 
 ```bash
 . .venv/bin/activate
-python -m osan.server --host 127.0.0.1 --port 8765
-```
-
-Run repeated dry-run submissions in another terminal:
-
-```bash
-. .venv/bin/activate
-scripts/run-task \
-  --task tasks/openseti-demo-001.json \
-  --coordinator-url http://127.0.0.1:8765 \
-  --submit \
-  --repeat 10 \
-  --interval 0 \
-  --dry-run \
-  --worker-id release-smoke
-curl http://127.0.0.1:8765/v1/leaderboard
-curl http://127.0.0.1:8765/v1/tasks/openseti-demo-001/summary
+scripts/release-smoke --repeat 10 --task-id openseti-demo-001
 ```
 
 Expected result:
 
-- 10 submissions return `201`
+- the script starts a local coordinator on an ephemeral localhost port
+- 10 dry-run submissions are accepted by the coordinator
 - the leaderboard shows 10 valid results for the demo task
 - the task summary shows 10 results, no need for more reviews, and a consensus
   recommendation
@@ -80,10 +65,11 @@ python3 -m venv .venv
 . .venv/bin/activate
 pip install -e ".[test]"
 pytest -q
+scripts/release-smoke --repeat 3 --task-id openseti-demo-001
 ```
 
-Use a non-default coordinator port, for example `8766`, if the local checkout is
-already running a coordinator.
+The smoke script binds an ephemeral localhost port by default, so it can run
+alongside another local coordinator.
 
 ## 5. GitHub Checks
 

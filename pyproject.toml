@@ -22,6 +22,7 @@ osan-validate-result = "osan.validator:main"
 osan-validate-task = "osan.validator:task_main"
 osan-validate-task-manifest = "osan.task_manifest:main"
 osan-check-task-intake = "osan.task_intake:main"
+osan-release-smoke = "osan.release_smoke:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]

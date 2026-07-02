@@ -1,0 +1,4 @@
+#!/usr/bin/env python3
+from osan.release_smoke import main
+
+raise SystemExit(main())

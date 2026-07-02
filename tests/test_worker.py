@@ -1,6 +1,7 @@
 import json
 from pathlib import Path
 
+from osan.release_smoke import run_release_smoke
 from osan.validator import validate_result
 from osan.worker import get_json, main, run_task, submit_result
 
@@ -66,6 +67,28 @@ def test_submit_result_posts_to_coordinator(tmp_path):
     finally:
         server.shutdown()
         server.server_close()
+
+
+def test_release_smoke_runs_repeated_submissions(tmp_path):
+    (tmp_path / "tasks").mkdir()
+    (tmp_path / "data").mkdir()
+    task = json.loads((ROOT / "tasks" / "openseti-demo-001.json").read_text())
+    (tmp_path / "tasks" / "openseti-demo-001.json").write_text(json.dumps(task), encoding="utf-8")
+
+    result = run_release_smoke(
+        root=tmp_path,
+        task_id="openseti-demo-001",
+        repeat=3,
+        worker_prefix="pytest-smoke",
+        run_id="fixed",
+    )
+
+    assert result["ok"] is True
+    assert result["submitted"] == 3
+    assert result["added_result_count"] == 3
+    assert result["summary"]["needs_more_reviews"] is False
+    assert result["summary"]["consensus_recommendation"] == "needs_human_review"
+    assert len(list((tmp_path / "data" / "results").glob("*.json"))) == 3
 
 
 def test_total_budget_stops_before_provider_call(tmp_path, monkeypatch):
