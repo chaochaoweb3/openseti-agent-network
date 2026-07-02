@@ -1,0 +1,23 @@
+{
+  "manifest_version": 1,
+  "tasks": [
+    {
+      "bytes": 1917,
+      "domain": "seti",
+      "path": "tasks/openseti-demo-001.json",
+      "sha256": "1898b8ad180fe4097998e3671188f485e7862e0df084f3154ddc369f269bc16f",
+      "source_license": "CC0",
+      "task_id": "openseti-demo-001",
+      "task_type": "candidate_review"
+    },
+    {
+      "bytes": 2552,
+      "domain": "exoplanet",
+      "path": "tasks/tess-spoc-transit-demo-001.json",
+      "sha256": "80f77c69147bd0424ced0d8e59b5ba88946520fe0d927e24d18aedea8602f7e4",
+      "source_license": "CC-BY-4.0",
+      "task_id": "tess-spoc-transit-demo-001",
+      "task_type": "transit_candidate_review"
+    }
+  ]
+}

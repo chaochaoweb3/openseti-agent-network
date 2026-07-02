@@ -23,11 +23,13 @@ python3 -m venv .venv
 . .venv/bin/activate
 pip install -e ".[test]"
 pytest -q
+scripts/validate-task-manifest
 ```
 
 Expected result:
 
 - all tests pass
+- task manifest matches the current `tasks/*.json` files
 - no credentials or generated result files are added to Git
 
 ## 3. Local Coordinator Smoke Test

@@ -26,6 +26,10 @@ Every task JSON file must include:
 - `review_questions`: concrete questions reviewers must answer.
 - `expected_outputs`: result fields expected from workers or agent clients.
 
+Every accepted task file must also appear in `tasks.manifest.json`. The manifest
+records task metadata, file size, and SHA-256 hash so reviewers can detect
+unreviewed fixture drift.
+
 ## Intake Score
 
 Score each proposal from 0 to 2 for each category.
@@ -71,9 +75,9 @@ data.
 ## Acceptance Checklist
 
 - [ ] `scripts/validate-task tasks/<task-id>.json` passes.
+- [ ] `scripts/validate-task-manifest` passes after the manifest is updated.
 - [ ] `pytest -q` passes if schema, validation, or worker behavior changed.
 - [ ] The task has source and license metadata.
 - [ ] The task includes caveats and conservative review questions.
 - [ ] The task contains no credentials, private data, or generated results.
 - [ ] The task output can be validated against `schemas/result.schema.json`.
-

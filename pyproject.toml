@@ -20,6 +20,7 @@ osan-server = "osan.server:main"
 osan-worker = "osan.worker:main"
 osan-validate-result = "osan.validator:main"
 osan-validate-task = "osan.validator:task_main"
+osan-validate-task-manifest = "osan.task_manifest:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]

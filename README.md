@@ -60,6 +60,7 @@ Run one dry-run worker task:
 
 ```bash
 scripts/run-task --task tasks/openseti-demo-001.json --output results/demo-result.json --dry-run
+scripts/validate-task-manifest
 scripts/validate-task tasks/openseti-demo-001.json
 scripts/validate-result results/demo-result.json
 ```
@@ -152,6 +153,7 @@ This repository is a working prototype. It includes:
 - a Codex/Claude Code agent workflow
 - result schema validation and secret scanning
 - task intake validation and a public task rubric
+- deterministic task manifest checksums for public fixtures
 - task catalog and per-task result aggregation endpoints
 - a synthetic SETI candidate review demo
 - a public TESS-SPOC metadata-only transit review fixture

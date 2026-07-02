@@ -14,6 +14,7 @@ The current priority is to keep the public demo boringly runnable.
 - Keep the GitHub Pages homepage deployed.
 - Keep the local coordinator plus dry-run worker path working from a fresh clone.
 - Keep task catalog, leaderboard, and per-task summary endpoints working.
+- Keep the task manifest in sync with public fixture file hashes.
 - Keep result validation strict enough to reject credentials, private data, and
   unsupported scientific claims.
 - Document the continuous worker path clearly enough for a new volunteer to run
@@ -51,7 +52,7 @@ The project should make it obvious whether the network is healthy.
 
 These items are intentionally later because they expand the trust boundary.
 
-- Signed or checksum-linked task bundles.
+- Signed task bundles and stronger provenance metadata.
 - Multi-task queues and task assignment policy.
 - Richer result aggregation policies for quorum thresholds, reviewer weighting,
   and long-running task health.
