@@ -151,6 +151,7 @@ This repository is a working prototype. It includes:
 - result schema validation and secret scanning
 - task intake validation and a public task rubric
 - a synthetic SETI candidate review demo
+- a public TESS-SPOC metadata-only transit review fixture
 
 It does not yet process raw radio telescope data or make autonomous scientific
 claims.

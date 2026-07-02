@@ -1,0 +1,51 @@
+{
+  "task_id": "tess-spoc-transit-demo-001",
+  "domain": "exoplanet",
+  "task_type": "transit_candidate_review",
+  "title": "Metadata-only review of a public TESS-SPOC transit candidate workflow",
+  "dataset_source": "TESS-SPOC High Level Science Products at MAST",
+  "source_url": "https://registry.opendata.aws/mast-tess-spoc/",
+  "source_citation": "TESS mission data are public through MAST; the TESS-SPOC HLSP registry entry states that HLSPs hosted at MAST are subject to a CC BY 4.0 license.",
+  "source_license": "CC-BY-4.0",
+  "input_uri": "https://registry.opendata.aws/mast-tess-spoc/",
+  "input_sha256": "metadata-only-public-fixture",
+  "objective": "Review a public TESS-SPOC transit-candidate workflow fixture and identify the checks needed before any strong exoplanet validation claim.",
+  "caveats": [
+    "This task is a metadata-only fixture and does not bundle raw TESS FITS files.",
+    "The public archive must be inspected for light-curve shape, centroid motion, secondary eclipses, and contamination checks before validation.",
+    "The task is for conservative workflow review, not for claiming a new planet discovery."
+  ],
+  "input": {
+    "target_name": "public TESS-SPOC transit candidate fixture",
+    "mission": "TESS",
+    "public_archive": "MAST",
+    "data_product_family": "TESS-SPOC light curves and Data Validation products",
+    "product_access": "Public TESS-SPOC HLSP products are discoverable through MAST and the Registry of Open Data on AWS.",
+    "observables_to_review": [
+      "periodic transit-like dimming",
+      "odd-even transit depth consistency",
+      "secondary eclipse search",
+      "centroid motion during transit",
+      "nearby contaminating sources",
+      "instrumental or processing systematics"
+    ],
+    "known_context": [
+      "TESS data products are public through MAST.",
+      "TESS-SPOC is a High Level Science Product family hosted at MAST.",
+      "This fixture intentionally stores source metadata and review questions rather than copying large FITS products into the repository."
+    ]
+  },
+  "review_questions": [
+    "Which public archive products must be inspected before judging this transit-like signal?",
+    "What ordinary astrophysical, instrumental, or contamination explanations should be checked first?",
+    "What evidence is missing from this metadata-only fixture before validation could be considered?"
+  ],
+  "expected_outputs": [
+    "short_summary",
+    "classification",
+    "confidence",
+    "recommendation",
+    "evidence_refs",
+    "limitations"
+  ]
+}

@@ -25,6 +25,24 @@ def test_dry_run_worker_generates_valid_result():
     assert "api_key" not in json.dumps(payload).lower()
 
 
+def test_dry_run_transit_task_generates_valid_result():
+    task = json.loads((ROOT / "tasks" / "tess-spoc-transit-demo-001.json").read_text())
+
+    payload = run_task(
+        task=task,
+        provider="dry-run",
+        model="dry-run-reviewer-v1",
+        worker_id="pytest-transit-worker",
+        max_cost_usd=0,
+    )
+
+    validate_result(payload)
+    assert payload["task_id"] == "tess-spoc-transit-demo-001"
+    assert payload["result"]["classification"] == "ambiguous_candidate"
+    assert payload["recommendation"] == "needs_human_review"
+    assert "None MHz" not in payload["result"]["short_summary"]
+
+
 def test_submit_result_posts_to_coordinator(tmp_path):
     from osan.server import build_server
     import threading

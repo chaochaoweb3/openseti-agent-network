@@ -43,15 +43,21 @@ def estimate_cost_usd(provider: str, prompt_chars: int) -> float:
 
 def build_prompt(task: dict[str, Any]) -> str:
     return (
-        "You are reviewing an open science SETI-style candidate. "
+        "You are reviewing an open science astronomy or SETI-style candidate. "
         "Return conservative JSON fields only: short_summary, classification, "
         "analysis, confidence, recommendation, evidence_refs, limitations. "
-        "Do not claim alien discovery.\n\n"
+        "Do not claim discovery from incomplete review data.\n\n"
         f"TASK:\n{json.dumps(task, ensure_ascii=False, indent=2)}"
     )
 
 
 def dry_run_analysis(task: dict[str, Any]) -> dict[str, Any]:
+    if task.get("task_type") == "transit_candidate_review":
+        return dry_run_transit_analysis(task)
+    return dry_run_seti_analysis(task)
+
+
+def dry_run_seti_analysis(task: dict[str, Any]) -> dict[str, Any]:
     input_data = task.get("input", {})
     repeat = input_data.get("repeat_observation", {})
     detected_again = repeat.get("detected_again")
@@ -92,6 +98,45 @@ def dry_run_analysis(task: dict[str, Any]) -> dict[str, Any]:
             "No raw voltage data is included in the task.",
             "The demo task does not include a full RFI environment log.",
             "One non-repeat follow-up is not sufficient to rule out all astrophysical or instrumental explanations.",
+        ],
+    }
+
+
+def dry_run_transit_analysis(task: dict[str, Any]) -> dict[str, Any]:
+    input_data = task.get("input", {})
+    target = input_data.get("target_name", "the public TESS target")
+    archive = input_data.get("public_archive", "MAST")
+    product = input_data.get("data_product_family", "public light-curve products")
+
+    return {
+        "short_summary": (
+            f"{target} is represented as a metadata-only transit review fixture "
+            f"based on {archive} {product}; it is useful for workflow testing but "
+            "not enough for validation on its own."
+        ),
+        "classification": "ambiguous_candidate",
+        "analysis": (
+            "The task points reviewers to public TESS-SPOC light-curve and data "
+            "validation products, but this fixture intentionally does not bundle "
+            "the raw FITS files or a full vetting report. A conservative reviewer "
+            "should check the archived light curve, odd-even depth consistency, "
+            "secondary eclipses, centroid motion, nearby contaminants, and known "
+            "instrumental systematics before treating the signal as a strong "
+            "planet candidate."
+        ),
+        "confidence": 0.46,
+        "recommendation": "needs_human_review",
+        "evidence_refs": [
+            "task.dataset_source",
+            "task.source_url",
+            "task.input.public_archive",
+            "task.input.data_product_family",
+            "task.caveats",
+        ],
+        "limitations": [
+            "The fixture is metadata-only and does not bundle raw TESS light-curve files.",
+            "Transit depth, period, centroid, odd-even, and secondary-eclipse checks must be performed from the public archive.",
+            "This review cannot validate an exoplanet candidate without inspecting the referenced public data products.",
         ],
     }
 
