@@ -19,6 +19,7 @@ test = ["pytest>=8"]
 osan-server = "osan.server:main"
 osan-worker = "osan.worker:main"
 osan-validate-result = "osan.validator:main"
+osan-validate-task = "osan.validator:task_main"
 
 [tool.setuptools.packages.find]
 where = ["src"]

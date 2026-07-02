@@ -34,7 +34,13 @@ pytest
 
 Task JSON should use public or redistributable data. Include source and license
 metadata whenever possible. Do not include private datasets, credentials, or
-browser session data.
+browser session data. Before opening a task PR, check
+[`docs/task-intake-rubric.md`](docs/task-intake-rubric.md) and run:
+
+```bash
+scripts/validate-task tasks/<task-id>.json
+pytest -q
+```
 
 ## Maintainer Tasks
 

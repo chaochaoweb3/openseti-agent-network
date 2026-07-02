@@ -8,6 +8,11 @@
   "input_uri": "tasks/openseti-demo-001.json",
   "input_sha256": "self-contained-demo",
   "objective": "Review a synthetic narrowband candidate record and produce a conservative, auditable SETI-style assessment.",
+  "caveats": [
+    "This is a synthetic demo task, not a claimed detection.",
+    "No raw voltage data, full RFI environment log, or independent telescope follow-up is included.",
+    "Reviewers must treat the result as a conservative workflow demonstration."
+  ],
   "input": {
     "target_name": "Kepler-452",
     "right_ascension": "19h44m00.89s",

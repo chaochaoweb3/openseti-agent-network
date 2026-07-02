@@ -44,6 +44,42 @@ REQUIRED_FIELDS = {
 }
 
 OPTIONAL_FIELDS = {"prompt_version", "input_sha256"}
+TASK_REQUIRED_FIELDS = {
+    "task_id",
+    "domain",
+    "task_type",
+    "title",
+    "dataset_source",
+    "source_license",
+    "input_uri",
+    "input_sha256",
+    "objective",
+    "caveats",
+    "input",
+    "review_questions",
+    "expected_outputs",
+}
+TASK_STRING_FIELDS = {
+    "task_id",
+    "domain",
+    "task_type",
+    "title",
+    "dataset_source",
+    "source_license",
+    "input_uri",
+    "input_sha256",
+    "objective",
+}
+TASK_ARRAY_FIELDS = {"caveats", "review_questions", "expected_outputs"}
+TASK_REJECTED_LICENSES = {"", "unknown", "tbd", "proprietary", "private"}
+TASK_OVERCLAIM_PHRASES = {
+    "confirmed alien",
+    "confirmed extraterrestrial",
+    "discovered aliens",
+    "discovery of extraterrestrial life",
+    "proof of alien",
+    "proof of extraterrestrial",
+}
 MAX_SHORT_TEXT = 512
 MAX_LONG_TEXT = 10_000
 MAX_ARRAY_ITEMS = 64
@@ -58,6 +94,58 @@ class ValidationError(ValueError):
 def load_json(path: Path) -> Any:
     with path.open("r", encoding="utf-8") as handle:
         return json.load(handle)
+
+
+def _require_non_empty_string(payload: dict[str, Any], field: str, max_length: int = MAX_SHORT_TEXT) -> None:
+    if not isinstance(payload[field], str) or not payload[field].strip():
+        raise ValidationError(f"{field} must be a non-empty string")
+    if len(payload[field]) > max_length:
+        raise ValidationError(f"{field} is too long")
+
+
+def _require_string_array(payload: dict[str, Any], field: str) -> None:
+    value = payload[field]
+    if not isinstance(value, list) or not value:
+        raise ValidationError(f"{field} must be a non-empty array")
+    if len(value) > MAX_ARRAY_ITEMS:
+        raise ValidationError(f"{field} has too many items")
+    if not all(isinstance(item, str) and item.strip() for item in value):
+        raise ValidationError(f"{field} items must be non-empty strings")
+    if any(len(item) > MAX_SHORT_TEXT for item in value):
+        raise ValidationError(f"{field} items must be shorter")
+
+
+def validate_task(payload: dict[str, Any]) -> None:
+    assert_no_secrets(payload)
+
+    if not isinstance(payload, dict):
+        raise ValidationError("top-level task payload must be an object")
+
+    keys = set(payload)
+    missing = TASK_REQUIRED_FIELDS - keys
+    if missing:
+        raise ValidationError(f"missing required task fields: {', '.join(sorted(missing))}")
+
+    for field in TASK_STRING_FIELDS:
+        _require_non_empty_string(payload, field)
+
+    license_name = payload["source_license"].strip().lower()
+    if license_name in TASK_REJECTED_LICENSES:
+        raise ValidationError("source_license must be redistributable and explicit")
+
+    for field in TASK_ARRAY_FIELDS:
+        _require_string_array(payload, field)
+
+    task_input = payload["input"]
+    if not isinstance(task_input, dict) or not task_input:
+        raise ValidationError("input must be a non-empty object")
+
+    combined_claim_text = " ".join(
+        str(payload[field]).lower() for field in ("title", "objective", "dataset_source")
+    )
+    combined_claim_text += " " + " ".join(item.lower() for item in payload["review_questions"])
+    if any(phrase in combined_claim_text for phrase in TASK_OVERCLAIM_PHRASES):
+        raise ValidationError("task text must not claim confirmed extraterrestrial discovery")
 
 
 def validate_result(payload: dict[str, Any]) -> None:
@@ -153,6 +241,22 @@ def main(argv: list[str] | None = None) -> int:
         return 1
 
     print(f"valid: {args.result}")
+    return 0
+
+
+def task_main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(description="Validate an OSAN task JSON file.")
+    parser.add_argument("task", type=Path)
+    args = parser.parse_args(argv)
+
+    try:
+        payload = load_json(args.task)
+        validate_task(payload)
+    except Exception as exc:  # noqa: BLE001 - CLI should return readable validation failures.
+        print(f"invalid: {exc}", file=sys.stderr)
+        return 1
+
+    print(f"valid: {args.task}")
     return 0
 
 

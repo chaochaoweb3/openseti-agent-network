@@ -29,7 +29,8 @@ intake conservative.
 - Add at least one additional public, redistributable task fixture.
 - Track task source, license, review questions, expected output, and caveats in
   every task file.
-- Add tests that protect task schema compatibility and result reproducibility.
+- Add tests and validation scripts that protect task schema compatibility and
+  result reproducibility.
 - Make task proposals easy to triage with labels and a maintainer task template.
 
 ## Following Phase: Volunteer Confidence
@@ -66,4 +67,3 @@ When choosing work, prefer the first item that is true:
 3. Improve contributor flow: issue templates, roadmap clarity, task examples,
    review checklists.
 4. Add capability only after the operating and safety boundaries are clear.
-

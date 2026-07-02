@@ -1,0 +1,4 @@
+#!/usr/bin/env python3
+from osan.validator import task_main
+
+raise SystemExit(task_main())

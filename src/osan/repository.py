@@ -9,6 +9,8 @@ from collections import Counter, defaultdict
 from pathlib import Path
 from typing import Any
 
+from .validator import validate_task
+
 
 class Repository:
     def __init__(self, root: Path):
@@ -22,6 +24,7 @@ class Repository:
         for path in sorted(self.tasks_dir.glob("*.json")):
             with path.open("r", encoding="utf-8") as handle:
                 task = json.load(handle)
+            validate_task(task)
             task["_path"] = str(path.relative_to(self.root))
             tasks.append(task)
         return tasks
