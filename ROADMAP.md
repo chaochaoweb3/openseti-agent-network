@@ -14,6 +14,8 @@ The current priority is to keep the public demo boringly runnable.
 - Keep the GitHub Pages homepage deployed.
 - Keep the local coordinator plus dry-run worker path working from a fresh clone.
 - Keep task catalog, leaderboard, and per-task summary endpoints working.
+- Keep task intake scoring strict enough to flag weak sources, licenses,
+  reproducibility, caveats, privacy, and review value.
 - Keep the task manifest in sync with public fixture file hashes.
 - Keep result validation strict enough to reject credentials, private data, and
   unsupported scientific claims.
@@ -27,12 +29,10 @@ Target: August 2026.
 The next priority is to move beyond a single synthetic demo while keeping task
 intake conservative.
 
-- Add a task scoring rubric for public astronomy or SETI-style review tasks.
 - Add at least one additional public, redistributable task fixture.
 - Track task source, license, review questions, expected output, and caveats in
   every task file.
-- Add tests and validation scripts that protect task schema compatibility and
-  result reproducibility.
+- Expand tests and validation scripts as task types grow.
 - Make task proposals easy to triage with labels and a maintainer task template.
 
 ## Following Phase: Volunteer Confidence

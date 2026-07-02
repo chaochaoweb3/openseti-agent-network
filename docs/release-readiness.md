@@ -23,12 +23,14 @@ python3 -m venv .venv
 . .venv/bin/activate
 pip install -e ".[test]"
 pytest -q
+scripts/check-task-intake
 scripts/validate-task-manifest
 ```
 
 Expected result:
 
 - all tests pass
+- task intake scores pass for all public fixtures
 - task manifest matches the current `tasks/*.json` files
 - no credentials or generated result files are added to Git
 

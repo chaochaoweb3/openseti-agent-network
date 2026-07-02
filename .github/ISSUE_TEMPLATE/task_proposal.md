@@ -26,3 +26,4 @@ keep in mind?
 - [ ] The task contains no credentials, cookies, or private data.
 - [ ] The task does not claim confirmed extraterrestrial discovery.
 - [ ] The task can satisfy `docs/task-intake-rubric.md`.
+- [ ] A draft task file would pass `scripts/check-task-intake`.

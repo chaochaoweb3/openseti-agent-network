@@ -25,3 +25,5 @@ jobs:
         run: pytest -q
       - name: Validate task manifest
         run: scripts/validate-task-manifest
+      - name: Check task intake rubric
+        run: scripts/check-task-intake

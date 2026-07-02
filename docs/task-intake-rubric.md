@@ -45,6 +45,18 @@ Score each proposal from 0 to 2 for each category.
 
 Accept tasks scoring at least 10 out of 12 with no hard rejection criteria.
 
+## Automated Intake Check
+
+Run the rubric checker before opening a task PR:
+
+```bash
+scripts/check-task-intake tasks/<task-id>.json
+```
+
+The checker prints a 0-2 score for each category and exits non-zero if a task
+scores below 10 or triggers a hard rejection. It is an early triage gate, not a
+replacement for human scientific review.
+
 ## Hard Rejection Criteria
 
 Reject or rewrite a task if any item is true:
@@ -75,6 +87,8 @@ data.
 ## Acceptance Checklist
 
 - [ ] `scripts/validate-task tasks/<task-id>.json` passes.
+- [ ] `scripts/check-task-intake tasks/<task-id>.json` scores at least 10/12
+      and reports no hard rejections.
 - [ ] `scripts/validate-task-manifest` passes after the manifest is updated.
 - [ ] `pytest -q` passes if schema, validation, or worker behavior changed.
 - [ ] The task has source and license metadata.

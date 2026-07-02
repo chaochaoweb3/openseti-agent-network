@@ -19,6 +19,9 @@
 `tasks.manifest.json` 记录每个任务文件的路径、任务 ID、许可、字节数和
 SHA-256 哈希，用来发现未同步的任务 fixture 改动。
 
+`scripts/check-task-intake` 会按来源、许可、可复现性、复核价值、caveats
+和隐私六项给任务打分，低于 10/12 或触发硬性拒绝条件的任务不能进入公开队列。
+
 ## 2. 协调服务 Coordinator
 
 协调服务提供这些核心接口：

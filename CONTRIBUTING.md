@@ -39,6 +39,8 @@ browser session data. Before opening a task PR, check
 
 ```bash
 scripts/validate-task tasks/<task-id>.json
+scripts/check-task-intake tasks/<task-id>.json
+scripts/validate-task-manifest
 pytest -q
 ```
 
