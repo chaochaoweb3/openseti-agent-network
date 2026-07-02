@@ -238,6 +238,53 @@ pre {
   padding-bottom: 40px;
 }
 
+.status {
+  padding-top: 40px;
+}
+
+.health-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.health-item {
+  display: flex;
+  min-height: 230px;
+  flex-direction: column;
+  gap: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 22px;
+  background: white;
+}
+
+.health-item:hover {
+  border-color: rgba(4, 124, 122, 0.45);
+}
+
+.health-item strong {
+  font-size: 18px;
+  line-height: 1.35;
+}
+
+.health-item span:last-child {
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.status-pill {
+  width: fit-content;
+  border: 1px solid rgba(4, 124, 122, 0.22);
+  border-radius: 999px;
+  padding: 5px 9px;
+  color: var(--teal);
+  background: rgba(4, 124, 122, 0.06);
+  font-size: 12px;
+  font-weight: 780;
+}
+
 .checks {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -295,6 +342,7 @@ pre {
   .hero-grid,
   .split,
   .cards,
+  .health-grid,
   .checks {
     grid-template-columns: 1fr;
   }

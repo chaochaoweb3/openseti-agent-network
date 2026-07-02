@@ -17,6 +17,7 @@
         <div class="nav-links">
           <a href="#how">架构</a>
           <a href="#run">运行</a>
+          <a href="#status">状态</a>
           <a href="#safety">安全</a>
           <a href="https://github.com/chaochaoweb3/openseti-agent-network">GitHub</a>
         </div>
@@ -112,6 +113,35 @@ scripts/run-task --task tasks/openseti-demo-001.json \
   --output results/demo-result.json \
   --dry-run
 scripts/validate-result results/demo-result.json</code></pre>
+      </section>
+
+      <section class="section status" id="status">
+        <div class="section-heading">
+          <p class="eyebrow">Project health</p>
+          <h2>公开状态优先看可验证路径，而不是宣传口号</h2>
+        </div>
+        <div class="health-grid">
+          <a class="health-item" href="https://github.com/chaochaoweb3/openseti-agent-network/actions">
+            <span class="status-pill">CI / Pages</span>
+            <strong>GitHub Actions 持续验证测试和静态站点部署。</strong>
+            <span>推送 main 后必须确认 CI 与 Pages 成功。</span>
+          </a>
+          <a class="health-item" href="https://github.com/chaochaoweb3/openseti-agent-network/blob/main/docs/release-readiness.md">
+            <span class="status-pill">Release gate</span>
+            <strong>发布前按 release readiness checklist 走 fresh-clone 检查。</strong>
+            <span>本地测试、coordinator smoke、leaderboard 和 Actions 都要过。</span>
+          </a>
+          <a class="health-item" href="https://github.com/chaochaoweb3/openseti-agent-network/blob/main/docs/task-intake-rubric.md">
+            <span class="status-pill">Task intake</span>
+            <strong>新任务必须有公开来源、许可、caveats 和校验脚本。</strong>
+            <span>任务先过 rubric，再进入 worker 或 agent-client 流程。</span>
+          </a>
+          <a class="health-item" href="https://github.com/chaochaoweb3/openseti-agent-network/blob/main/ROADMAP.md">
+            <span class="status-pill">Roadmap</span>
+            <strong>当前重点是可运行原型、任务准入和志愿者信心。</strong>
+            <span>后续网络协调能力等安全边界更清楚后再扩展。</span>
+          </a>
+        </div>
       </section>
 
       <section class="section safety" id="safety">
